@@ -4,14 +4,6 @@ isprecompiling() = ccall(:jl_generating_output, Cint, ()) == 1
 
 type Hook end
 
-@init @guard begin
-  methods(require).mt.cache.sig = Tuple{typeof(require),Symbol,Hook}
-  function Base.require(mod::Symbol)
-    eval(:require)(mod, Requires.Hook())
-    Requires.loadmod(string(mod))
-  end
-end
-
 loaded(mod) = getthing(Main, mod) != nothing
 
 const modlisteners = Dict{AbstractString,Vector{Function}}()
